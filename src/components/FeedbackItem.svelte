@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import { FeedbackStore } from "../stores";
   import type { Feedback } from "../types";
   import Card from "./Card.svelte";
 
@@ -9,10 +9,8 @@
     text: "",
   };
 
-  const dispatch = createEventDispatcher();
-
   function handleDelete () {
-    dispatch('delete-feedback', item.id);
+    FeedbackStore.update((fb) => fb.filter((f) => f.id !== item.id));
   }
 </script>
 

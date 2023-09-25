@@ -1,17 +1,30 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import type { Feedback } from "../types";
+  import { FeedbackStore } from "../stores";
   import Button from "./Button.svelte";
   import Card from "./Card.svelte";
   import RatingSelect from "./RatingSelect.svelte";
 
-  export let currentFeedback: Feedback[] = [];
+  let currentFeedback = $FeedbackStore;
   let text = '';
   let rating = 0;
   let btnDisabled = true;
   let min = 10;
   let message = '';
   const dispatch = createEventDispatcher();
+
+  function generateRandomId() {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const length = 10;
+    let randomId = '';
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      randomId += characters.charAt(randomIndex);
+    }
+
+    return randomId;
+  }
 
   function isValidMessage() {
     return text.trim().length > min;
@@ -52,17 +65,19 @@
       return;
     }
 
-    const maxId = currentFeedback.length > 0 
-      ? Math.max(...currentFeedback.map((fb) => fb.id)) 
-      : 0;
+    console.log(currentFeedback);
 
     const newFeedback = {
-      id: maxId + 1,
+      id: generateRandomId(),
       rating: rating,
       text: text,
     };
 
-    dispatch("add-feedback", newFeedback);
+    FeedbackStore.update((fb) => {
+      fb.push(newFeedback); 
+      return fb;
+    });
+    
     form.reset();
   }
 

@@ -4,32 +4,13 @@
   import FeedbackStats from "./components/FeedbackStats.svelte";
   import type { Feedback } from "./types";
 
-  let feedback = [
-    { id: 1, rating: 10, text: "This is the first feedback" },
-    { id: 2, rating: 5, text: "This is the second feedback" },
-    { id: 3, rating: 8, text: "This is the third feedback" },
-  ];
-
-  $: count = feedback.length;
-  $: average = feedback.reduce((acc, curr) => acc + curr.rating, 0) / feedback.length;
-
-  function handleDeleteFeedback (e: CustomEvent<number>) {
-    const id = e.detail;
-    feedback = feedback.filter((fb) => fb.id !== id);
-  }
-
-  function handleAddFeedback(e: CustomEvent) {
-    const newFeedback = e.detail as Feedback;
-    feedback.push(newFeedback);
-    feedback = feedback;
-  }
 
 </script>
 
 <main class="container">
-  <FeedbackForm currentFeedback={feedback} on:add-feedback={handleAddFeedback}/>
-  <FeedbackStats {count} {average} />
-  <FeedbackList {feedback} on:delete-feedback={handleDeleteFeedback} />
+  <FeedbackForm />
+  <FeedbackStats />
+  <FeedbackList />
 </main>
 
 <style>
