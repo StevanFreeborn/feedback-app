@@ -2,6 +2,7 @@
   import FeedbackForm from "./components/FeedbackForm.svelte";
   import FeedbackList from "./components/FeedbackList.svelte";
   import FeedbackStats from "./components/FeedbackStats.svelte";
+  import type { Feedback } from "./types";
 
   let feedback = [
     { id: 1, rating: 10, text: "This is the first feedback" },
@@ -17,10 +18,16 @@
     feedback = feedback.filter((fb) => fb.id !== id);
   }
 
+  function handleAddFeedback(e: CustomEvent) {
+    const newFeedback = e.detail as Feedback;
+    feedback.push(newFeedback);
+    feedback = feedback;
+  }
+
 </script>
 
 <main class="container">
-  <FeedbackForm />
+  <FeedbackForm currentFeedback={feedback} on:add-feedback={handleAddFeedback}/>
   <FeedbackStats {count} {average} />
   <FeedbackList {feedback} on:delete-feedback={handleDeleteFeedback} />
 </main>

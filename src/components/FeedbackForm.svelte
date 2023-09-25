@@ -1,31 +1,79 @@
-<script>
+<script lang="ts">
+  import { createEventDispatcher } from "svelte";
+  import type { Feedback } from "../types";
   import Button from "./Button.svelte";
   import Card from "./Card.svelte";
   import RatingSelect from "./RatingSelect.svelte";
 
+  export let currentFeedback: Feedback[] = [];
   let text = '';
-  let rating = 10;
+  let rating = 0;
   let btnDisabled = true;
   let min = 10;
   let message = '';
+  const dispatch = createEventDispatcher();
 
-  function handleInput(){
-    if (text.trim().length <= min) {
+  function isValidMessage() {
+    return text.trim().length > min;
+  }
+
+  function handleInput() {
+    if (isValidMessage() === false) {
       message = `Please enter at least ${min} characters`;
-      btnDisabled = false;
+      btnDisabled = true;
       return;
     }
 
     message = '';
-    btnDisabled = true;
+    btnDisabled = false;
   }
+
+  function handleSelect(e: CustomEvent) {
+    rating = e.detail;
+
+    if (rating !== 0 && btnDisabled === true && isValidMessage()) {
+      btnDisabled = false;
+      message = '';
+    }
+  }
+
+  function handleSubmit(e: Event) {
+    const form = e.currentTarget as HTMLFormElement;
+  
+    if (isValidMessage() === false) {
+      message = `Please enter at least ${min} characters`;
+      btnDisabled = true;
+      return;
+    }
+
+    if (rating === 0) {
+      message = `Please select a rating`;
+      btnDisabled = true;
+      return;
+    }
+
+    const maxId = currentFeedback.length > 0 
+      ? Math.max(...currentFeedback.map((fb) => fb.id)) 
+      : 0;
+
+    const newFeedback = {
+      id: maxId + 1,
+      rating: rating,
+      text: text,
+    };
+
+    dispatch("add-feedback", newFeedback);
+    form.reset();
+  }
+
 </script>
+
 <Card>
   <header>
     <h2>How would you rate your service with us?</h2>
   </header>
-  <form class="form">
-    <RatingSelect />
+  <form on:submit|preventDefault={handleSubmit}>
+    <RatingSelect on:rating-select={handleSelect} />
     <div class="input-group">
       <input type="text" on:input={handleInput} bind:value={text} placeholder="Tell us something that keeps you coming back">
       <Button type={"submit"} disabled={btnDisabled} >Send</Button>
@@ -65,5 +113,11 @@
 
   input:focus {
     outline: none;
+  }
+
+  .message {
+    color: #ff6a95;
+    font-size: 14px;
+    margin-top: 10px;
   }
 </style>
