@@ -7,10 +7,15 @@
     { id: 3, rating: 8, text: "This is the third feedback" },
   ];
 
+  function handleDeleteFeedback (e: CustomEvent<number>) {
+    const id = e.detail;
+    feedback = feedback.filter((fb) => fb.id !== id);
+  }
+
 </script>
 
-<main>
-  <FeedbackList {feedback} />
+<main class="container">
+  <FeedbackList {feedback} on:delete-feedback={handleDeleteFeedback} />
 </main>
 
 <style>

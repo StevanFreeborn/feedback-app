@@ -1,17 +1,10 @@
 <script lang="ts">
-  type Feedback = {
-    id: number;
-    rating: number;
-    text: string;
-  };
-
+  import type { Feedback } from "../types";
+  import FeedbackItem from "./FeedbackItem.svelte";
   export let feedback: Feedback[] = [];
-</script>
+  </script>
 
-{#each feedback as { id, rating, text }}
-  <div class="feedback">
-    <h2>Feedback {id}</h2>
-    <p>Rating: {rating}</p>
-    <p>{text}</p>
-  </div>
-{/each}
+  {#each feedback as fb}
+    <FeedbackItem item={fb} on:delete-feedback />
+  {/each}
+
