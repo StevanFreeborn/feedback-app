@@ -5,7 +5,7 @@
 
 <div class="feedback-stats">
   <h4>{count} Review</h4>
-  <h4>Ratings Average: {average.toFixed(2)}</h4>
+  <h4>Ratings Average: {Number.isNaN(average) ? 0 : average.toFixed(2)}</h4>
 </div>
 
 <style>
